@@ -16,7 +16,7 @@ build:
 
 # Docker run command
 run:
-	docker run --platform $(PLATFORM) -p 8000:8000 $(IMAGE_NAME):$(IMAGE_VERSION)
+	docker run --name $(IMAGE_NAME) --platform $(PLATFORM) -p 8000:8000 $(IMAGE_NAME):$(IMAGE_VERSION)
 
 # Clean command to remove the image
 clean:
