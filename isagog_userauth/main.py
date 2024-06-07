@@ -9,7 +9,7 @@ from fastapi import Depends, FastAPI
 
 from isagog_userauth.database import init_db
 from isagog_userauth.routers import user
-from isagog_userauth.utils import get_current_user
+from isagog_userauth.utils import get_current_user, get_admin_user
 
 logging.getLogger("passlib").setLevel(
     logging.ERROR
@@ -37,6 +37,12 @@ def read_root():
 def protected_route():
     """sample protected route"""
     return {"message": "You have access to this JWT protected resource."}
+
+
+@app.get("/superprotected", dependencies=[Depends(get_admin_user)])
+def superprotected_route():
+    """this can be accessed only by an admin user"""
+    return {"message": "You have access to this ADMIN protected resource."}
 
 
 if __name__ == "__main__":
