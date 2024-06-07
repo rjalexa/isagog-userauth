@@ -49,11 +49,11 @@ To get started with this project, follow these steps:
 
 - Both the email and the username must be unique.
 - You can login with either the email or the username.
-- You can view the OpenAPI documentation at `host:port/docs`.
+- You can view the OpenAPI documentation at `host:8000/docs`.
 
 ## Usage
 
-The `main.py` file is a demo of how you can import, initialize, and use the user management, login, and authorization in your FastAPI app.
+The `main.py` file is a demo of how you can import, initialize, and use the user management, login, and authorization in your own FastAPI app.
 
 To be usable you need to have a `.env` file in the project root with the following content:
 
@@ -74,7 +74,7 @@ and of course you will customize at least the first three, and better yet the fi
 ## Building the Docker image
 
 You can use the `Makefile` by running `make build` to build an image with the version number specified in the Makefile.
-This image is built to be run under a non privileged `isagog` user.
+This image is built to be run under a non privileged `isagog` user. `make run` if you want to run this image as is.
 
 ## Contributing
 
