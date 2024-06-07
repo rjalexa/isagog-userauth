@@ -1,35 +1,23 @@
-# Define the version
-VERSION := 0.1.1
+# Define variables for image name and version
+IMAGE_NAME = isagog-userauth
+IMAGE_VERSION = 0.1.0
 
-# Define the image name
-IMAGE_NAME := isagog_users
+# Detect the platform
+ARCH = $(shell uname -m)
+ifeq ($(ARCH),arm64)
+    PLATFORM = linux/arm64
+else
+    PLATFORM = linux/amd64
+endif
 
-# Default target: list all available targets
-.PHONY: help
-help:
-	@echo "Available targets:"
-	@echo "  build   - Build the Docker image"
-	@echo "  push    - Push the Docker image to a registry"
-	@echo "  publish - Publish on PyPI"
-
-# Build the Docker image
-.PHONY: build
+# Docker build command
 build:
-	docker build -t $(IMAGE_NAME):$(VERSION) .
+	docker build --platform $(PLATFORM) -t $(IMAGE_NAME):$(IMAGE_VERSION) .
 
-# Push the Docker image (optional, if you want to push to a registry)
-.PHONY: push
-push:
-	docker push $(IMAGE_NAME):$(VERSION)
+# Docker run command
+run:
+	docker run --platform $(PLATFORM) -p 8000:8000 $(IMAGE_NAME):$(IMAGE_VERSION)
 
-# Build and publish the package using Poetry
-.PHONY: publish
-publish:
-	poetry build
-	poetry publish
-
-# Set the default target to 'help'
-.DEFAULT_GOAL := help
-
-# Set the default target to 'help'
-.DEFAULT_GOAL := help
+# Clean command to remove the image
+clean:
+	docker rmi $(IMAGE_NAME):$(IMAGE_VERSION)
