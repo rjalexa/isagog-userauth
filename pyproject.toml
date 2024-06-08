@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "isagog-userauth"
-version = "0.1.0"
+version = "0.1.1"
 description = "A FastAPI project to manage users and issue JWT tokens to control access"
 authors = ["Robert Alexander <gogonegro@gmail.com>"]
 readme = "README.md"

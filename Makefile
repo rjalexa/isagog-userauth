@@ -1,6 +1,6 @@
 # Define variables for image name and version
 IMAGE_NAME = isagog-userauth
-IMAGE_VERSION = 0.1.0
+IMAGE_VERSION = 0.1.1
 
 # Detect the platform
 ARCH = $(shell uname -m)
