@@ -23,7 +23,7 @@ Functions:
 
 from datetime import datetime, timedelta, timezone
 import jwt
-from passlib.context import CryptContext
+import bcrypt
 from fastapi import Depends, HTTPException, Security
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
@@ -37,7 +37,6 @@ from .db_session import get_db
 from .models import User
 from .custom_exceptions import MissingTokenException, ForbiddenException
 
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="user/login")
 
 
@@ -52,7 +51,10 @@ def verify_password(plain_password, hashed_password):
     Returns:
         bool: True if the password matches the hash, False otherwise.
     """
-    return pwd_context.verify(BCRYPT_PEPPER + plain_password, hashed_password)
+    return bcrypt.checkpw(
+        (BCRYPT_PEPPER + plain_password).encode("utf-8"),
+        hashed_password.encode("utf-8"),
+    )
 
 
 def get_password_hash(password):
@@ -65,7 +67,10 @@ def get_password_hash(password):
     Returns:
         str: The hashed password.
     """
-    return pwd_context.hash(BCRYPT_PEPPER + password)
+    salt = bcrypt.gensalt()
+    return bcrypt.hashpw((BCRYPT_PEPPER + password).encode("utf-8"), salt).decode(
+        "utf-8"
+    )
 
 
 def create_access_token(data: dict, expires_delta: timedelta = None):

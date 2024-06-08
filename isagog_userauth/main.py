@@ -11,9 +11,9 @@ from isagog_userauth.database import init_db
 from isagog_userauth.routers import user
 from isagog_userauth.utils import get_current_user, get_admin_user
 
-logging.getLogger("passlib").setLevel(
-    logging.ERROR
-)  # to get around a bcrypt / passlib version problem
+# logging.getLogger("passlib").setLevel(
+#    logging.ERROR
+# )  # to get around a bcrypt / passlib version problem
 
 
 @asynccontextmanager
