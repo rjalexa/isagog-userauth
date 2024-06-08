@@ -21,7 +21,7 @@ Functions:
     get_admin_user(current_user): Ensure the current user has admin privileges.
 """
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 import jwt
 from passlib.context import CryptContext
 from fastapi import Depends, HTTPException, Security
@@ -82,7 +82,8 @@ def create_access_token(data: dict, expires_delta: timedelta = None):
     """
     to_encode = data.copy()
     if expires_delta:
-        expire = datetime.utcnow() + expires_delta
+        expires_delta = timedelta(hours=1)  # Example expires_delta
+        expire = datetime.now(timezone.utc) + expires_delta
     else:
         expire = datetime.utcnow() + timedelta(minutes=ACCESS_TOKEN_LIFETIME)
     to_encode.update({"exp": expire})
@@ -100,7 +101,7 @@ def create_refresh_token(data: dict):
     Returns:
         str: The encoded JWT token.
     """
-    expire = datetime.utcnow() + timedelta(days=REFRESH_TOKEN_LIFETIME)
+    expire = datetime.now(timezone.utc) + timedelta(days=REFRESH_TOKEN_LIFETIME)
     to_encode = data.copy()
     to_encode.update({"exp": expire})
     encoded_jwt = jwt.encode(to_encode, JWT_SECRET, algorithm="HS256")
