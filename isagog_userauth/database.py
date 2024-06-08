@@ -1,12 +1,13 @@
 """ initialize the users database and initialize it with an admin user from the .env file """
 
 import os
+
 from dotenv import load_dotenv
 
 from .base import Base
+from .db_session import SessionLocal, engine
 from .models import User
 from .utils import get_password_hash
-from .db_session import SessionLocal, engine
 
 # Load environment variables
 load_dotenv()

@@ -20,8 +20,10 @@ Attributes:
 
 import os
 from datetime import datetime, timezone
+
 from dotenv import load_dotenv
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import Column, DateTime, Integer, String
+
 from .base import Base
 
 # Load environment variables

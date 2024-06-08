@@ -22,20 +22,18 @@ Functions:
 """
 
 from datetime import datetime, timedelta, timezone
-import jwt
+
 import bcrypt
+import jwt
 from fastapi import Depends, HTTPException, Security
 from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
-from .config import (
-    BCRYPT_PEPPER,
-    JWT_SECRET,
-    ACCESS_TOKEN_LIFETIME,
-    REFRESH_TOKEN_LIFETIME,
-)
+
+from .config import (ACCESS_TOKEN_LIFETIME, BCRYPT_PEPPER, JWT_SECRET,
+                     REFRESH_TOKEN_LIFETIME)
+from .custom_exceptions import ForbiddenException, MissingTokenException
 from .db_session import get_db
 from .models import User
-from .custom_exceptions import MissingTokenException, ForbiddenException
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="user/login")
 
