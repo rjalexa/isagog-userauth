@@ -51,6 +51,17 @@ To get started with this project, follow these steps:
 - You can login with either the email or the username.
 - You can view the OpenAPI documentation at `host:8000/docs`.
 
+### API Routes
+
+Current routes and their parameters can be examined via their OpenAPI docs. Here is a simple list:
+
+- /signup
+- /login
+- /refresh
+- /list
+- /delete
+- /passchange
+
 ## Usage
 
 The `main.py` file is a demo of how you can import, initialize, and use the user management, login, and authorization in your own FastAPI app.
@@ -70,6 +81,14 @@ USER_TABLE_NAME=users
 ```
 
 and of course you will customize at least the first three, and better yet the first five values.
+
+### User Classes
+
+- Registered users belong to either the admin or the basic class.
+- The initial database is seeded with a first admin user as defined in the `.env` file.
+- Only the admin users can signup, list or delete other users
+- The login and refresh functions are open to anyone.
+- The password change is open to all. Basic users can only change their own password.
 
 ## Building the Docker image
 
