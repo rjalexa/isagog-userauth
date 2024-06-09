@@ -1,10 +1,13 @@
+# Base stage
 FROM thehale/python-poetry:1.8.3-py3.11-slim as base
 RUN groupadd -r isagog && useradd -r -g isagog isagog
 
 WORKDIR /app
 COPY poetry.lock pyproject.toml /app/
-RUN poetry install --no-root
+ARG INSTALL_DEV=false
+RUN if [ "$INSTALL_DEV" = "true" ]; then poetry install --no-root --with dev; else poetry install --no-root; fi
 
+# Application stage
 FROM base as application
 WORKDIR /app
 COPY .env .
