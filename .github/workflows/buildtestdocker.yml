@@ -38,21 +38,20 @@ jobs:
           echo "USER_TABLE_NAME=${{ secrets.USER_TABLE_NAME }}" >> .env
 
       - name: Build Docker image with Buildx for testing
-        run: docker buildx build --tag isagog-userauth:${{ env.VERSION }} --load --build-arg INSTALL_DEV=true .
+        run: docker buildx build --tag isagog-userauth-test:${{ env.VERSION }} --target test --load --build-arg INSTALL_DEV=true .
 
-      - name: Run Docker container
-        run: docker run -d -p 8000:8000 --env-file .env --name isagog_userauth_container isagog-userauth:${{ env.VERSION }}
+      - name: Run Docker container for tests
+        run: docker run -d --env-file .env --name isagog_userauth_container_test isagog-userauth-test:${{ env.VERSION }}
 
       - name: Run tests
         run: |
-          docker exec isagog_userauth_container pytest
-          docker exec isagog_userauth_container tox
+          docker exec isagog_userauth_container_test poetry run pytest
 
-      - name: Stop and remove container
-        run: docker stop isagog_userauth_container && docker rm isagog_userauth_container
+      - name: Stop and remove test container
+        run: docker stop isagog_userauth_container_test && docker rm isagog_userauth_container_test
 
       - name: Build Docker image for production
-        run: docker buildx build --tag isagog-userauth:${{ env.VERSION }} --load .
+        run: docker buildx build --tag isagog-userauth:${{ env.VERSION }} --target production --load .
 
       - name: Push Docker image to registry (optional)
         run: |
