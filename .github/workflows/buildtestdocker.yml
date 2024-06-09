@@ -25,11 +25,23 @@ jobs:
           VERSION=$(grep -oP '(?<=^version = ")[^"]*' pyproject.toml)
           echo "VERSION=${VERSION}" >> $GITHUB_ENV
 
+      - name: Create .env file
+        run: |
+          echo "BCRYPT_PEPPER=${{ secrets.BCRYPT_PEPPER }}" >> .env
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+          echo "ADMIN_PASSWORD=${{ secrets.ADMIN_PASSWORD }}" >> .env
+          echo "ACCESS_TOKEN_LIFETIME=${{ secrets.ACCESS_TOKEN_LIFETIME }}" >> .env
+          echo "REFRESH_TOKEN_LIFETIME=${{ secrets.REFRESH_TOKEN_LIFETIME }}" >> .env
+          echo "ADMIN_EMAIL=${{ secrets.ADMIN_EMAIL }}" >> .env
+          echo "ADMIN_USERNAME=${{ secrets.ADMIN_USERNAME }}" >> .env
+          echo "USER_DB_URL=${{ secrets.USER_DB_URL }}" >> .env
+          echo "USER_TABLE_NAME=${{ secrets.USER_TABLE_NAME }}" >> .env
+
       - name: Build Docker image with Buildx
         run: docker buildx build --tag isagog-userauth:${{ env.VERSION }} --load .
 
       - name: Run Docker container
-        run: docker run -d -p 8000:8000 --name isagog_userauth_container isagog-userauth:${{ env.VERSION }}
+        run: docker run -d -p 8000:8000 --env-file .env --name isagog_userauth_container isagog-userauth:${{ env.VERSION }}
 
       - name: Run tests
         run: |
