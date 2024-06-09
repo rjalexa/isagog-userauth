@@ -7,19 +7,21 @@ COPY poetry.lock pyproject.toml /app/
 ARG INSTALL_DEV=false
 RUN if [ "$INSTALL_DEV" = "true" ]; then poetry install --no-root --with dev; else poetry install --no-root; fi
 
-# Application stage
-FROM base as application
+# Test stage
+FROM base as test
 WORKDIR /app
-COPY .env .
-RUN chown -R isagog:isagog .env
-COPY isagog_userauth /app/isagog_userauth
-RUN chown -R isagog:isagog /app/isagog_userauth
-COPY isagog_userauth/routers /app/isagog_userauth/routers
-RUN chown -R isagog:isagog /app/isagog_userauth/routers
+COPY . .
+RUN poetry install --no-root --with dev
 
-# Ensure the /app directory itself is writable by isagog
-# needed to create user.db at runtime
-RUN chown isagog:isagog /app
+# Production stage
+FROM base as production
+WORKDIR /app
+COPY . .
+RUN poetry install --no-root --no-dev
+
+COPY --chown=isagog:isagog isagog_userauth /app/isagog_userauth
+COPY --chown=isagog:isagog isagog_userauth/routers /app/isagog_userauth/routers
+COPY --chown=isagog:isagog .env .
 
 ENV PYTHONPATH=/app
 USER isagog
