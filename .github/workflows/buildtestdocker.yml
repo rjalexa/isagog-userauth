@@ -1,0 +1,40 @@
+name: Docker Build and Test
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+
+      - name: Extract version from Dockerfile
+        id: extract_version
+        run: |
+          VERSION=$(grep -i 'version' Dockerfile | cut -d '=' -f2 | tr -d '[:space:]')
+          echo "VERSION=${VERSION}" >> $GITHUB_ENV
+
+      - name: Build Docker image with Buildx
+        run: docker buildx build --tag isagog-userauth:${{ env.VERSION }} --load .
+
+      - name: Run Docker container
+        run: docker run -d -p 8000:8000 --name isagog_userauth_container isagog-userauth:${{ env.VERSION }}
+
+      - name: Run tests
+        run: |
+          docker exec isagog_userauth_container pytest
+          docker exec isagog_userauth_container tox
+
+      - name: Stop and remove container
+        run: docker stop isagog_userauth_container && docker rm isagog_userauth_container
